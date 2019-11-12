@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import 'firebase_messaging.dart';
@@ -28,11 +29,26 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+  int _counter;
 
-  void _incrementCounter() {
+  _MyHomePageState() {
+    Firestore.instance
+        .collection("misc-collection")
+        .document("misc-document")
+        .snapshots()
+        .listen((DocumentSnapshot ds) {
+      setState(() {
+        _counter = ds.data["counter"];
+      });
+    });
+  }
+
+  void _incrementCounter() async {
     setState(() {
-      _counter++;
+      Firestore.instance
+          .collection("misc-collection")
+          .document("misc-document")
+          .setData({"counter": ++_counter});
     });
   }
 
